@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lottery App — Fred Lackey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --max-w: 1100px;
+}
+
+[data-theme="dark"] {
+  --bg: #111113;
+  --bg-surface: #18181b;
+  --bg-hover: #1f1f23;
+  --border: #27272a;
+  --border-hover: #3f3f46;
+  --text-1: #f4f4f5;
+  --text-2: #a1a1aa;
+  --text-3: #63636b;
+  --accent: #c9a227;
+  --accent-soft: rgba(201, 162, 39, 0.1);
+
+  --badge-active-bg: rgba(34, 197, 94, 0.1);
+  --badge-active-border: rgba(34, 197, 94, 0.25);
+  --badge-active-text: #4ade80;
+  --badge-active-dot: #22c55e;
+
+  --badge-sold-bg: rgba(168, 130, 58, 0.1);
+  --badge-sold-border: rgba(168, 130, 58, 0.25);
+  --badge-sold-text: #d4a843;
+  --badge-sold-dot: #c9a227;
+
+  --badge-archived-bg: rgba(113, 113, 122, 0.1);
+  --badge-archived-border: rgba(113, 113, 122, 0.25);
+  --badge-archived-text: #a1a1aa;
+  --badge-archived-dot: #71717a;
+
+  --badge-legacy-bg: rgba(161, 98, 247, 0.08);
+  --badge-legacy-border: rgba(161, 98, 247, 0.2);
+  --badge-legacy-text: #b490f0;
+  --badge-legacy-dot: #a162f7;
+}
+
+[data-theme="light"] {
+  --bg: #fafaf9;
+  --bg-surface: #ffffff;
+  --bg-hover: #f5f5f4;
+  --border: #e4e4e7;
+  --border-hover: #d4d4d8;
+  --text-1: #18181b;
+  --text-2: #71717a;
+  --text-3: #a1a1aa;
+  --accent: #92710e;
+  --accent-soft: rgba(146, 113, 14, 0.07);
+
+  --badge-active-bg: rgba(34, 197, 94, 0.07);
+  --badge-active-border: rgba(34, 197, 94, 0.2);
+  --badge-active-text: #16a34a;
+  --badge-active-dot: #22c55e;
+
+  --badge-sold-bg: rgba(146, 113, 14, 0.07);
+  --badge-sold-border: rgba(146, 113, 14, 0.2);
+  --badge-sold-text: #92710e;
+  --badge-sold-dot: #b8960a;
+
+  --badge-archived-bg: rgba(113, 113, 122, 0.07);
+  --badge-archived-border: rgba(113, 113, 122, 0.2);
+  --badge-archived-text: #52525b;
+  --badge-archived-dot: #71717a;
+
+  --badge-legacy-bg: rgba(126, 58, 242, 0.06);
+  --badge-legacy-border: rgba(126, 58, 242, 0.15);
+  --badge-legacy-text: #7c3aed;
+  --badge-legacy-dot: #8b5cf6;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-1);
+  line-height: 1.6;
+  transition: background 0.4s var(--ease), color 0.4s var(--ease);
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+::selection { background: var(--accent); color: #fff; }
+
+/* ── NAV ── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.4s var(--ease);
+}
+
+.nav-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 clamp(24px, 5vw, 48px);
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.nav-brand span { color: var(--accent); }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-3);
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.nav-btn:hover { color: var(--text-2); background: var(--bg-hover); }
+.nav-btn svg { width: 20px; height: 20px; }
+
+.nav-btn .icon-moon,
+[data-theme="light"] .nav-btn .icon-sun { display: none; }
+[data-theme="light"] .nav-btn .icon-moon { display: block; }
+
+/* ── CONTAINER ── */
+.container {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 clamp(24px, 5vw, 48px);
+}
+
+/* ── BACK LINK ── */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-3);
+  padding: 24px 0;
+  transition: color 0.2s ease;
+}
+.back-link:hover { color: var(--accent); }
+.back-link svg { width: 16px; height: 16px; }
+
+/* ── PROJECT HEADER (two-column, mirrors index) ── */
+.writeup-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: start;
+  padding: clamp(48px, 7vw, 80px) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.writeup-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.writeup-title-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.writeup-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.5vw, 36px);
+  font-weight: 500;
+  letter-spacing: -0.8px;
+  line-height: 1.2;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 100px;
+  border: 1px solid;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.badge-active { background: var(--badge-active-bg); border-color: var(--badge-active-border); color: var(--badge-active-text); }
+.badge-active .badge-dot { background: var(--badge-active-dot); }
+.badge-sold { background: var(--badge-sold-bg); border-color: var(--badge-sold-border); color: var(--badge-sold-text); }
+.badge-sold .badge-dot { background: var(--badge-sold-dot); }
+.badge-archived { background: var(--badge-archived-bg); border-color: var(--badge-archived-border); color: var(--badge-archived-text); }
+.badge-archived .badge-dot { background: var(--badge-archived-dot); }
+.badge-legacy { background: var(--badge-legacy-bg); border-color: var(--badge-legacy-border); color: var(--badge-legacy-text); }
+.badge-legacy .badge-dot { background: var(--badge-legacy-dot); }
+
+.writeup-desc {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--text-2);
+  font-weight: 300;
+}
+
+.writeup-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 4px;
+}
+
+.writeup-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.writeup-meta-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.writeup-meta-value {
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+/* ── VISUAL (right column, mirrors index) ── */
+.writeup-visual {
+  aspect-ratio: 4 / 3;
+  border-radius: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.writeup-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+}
+
+.writeup-visual[data-accent="rose"]::before {
+  background: radial-gradient(ellipse at 30% 40%, rgba(244, 63, 94, 0.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 70%, rgba(244, 63, 94, 0.04) 0%, transparent 50%);
+}
+
+.writeup-visual-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px;
+  text-align: center;
+  position: relative;
+}
+
+.writeup-visual-icon { font-size: 48px; line-height: 1; }
+
+.writeup-visual-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.writeup-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+}
+
+/* ── PROSE (centered, readable width) ── */
+.prose-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: clamp(48px, 7vw, 72px) 0 0;
+}
+
+.prose h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.6px;
+  margin-top: 48px;
+  margin-bottom: 16px;
+}
+
+.prose h2:first-child { margin-top: 0; }
+
+.prose h3 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+  margin-top: 36px;
+  margin-bottom: 12px;
+}
+
+.prose p {
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--text-2);
+  margin-bottom: 20px;
+  font-weight: 300;
+}
+
+.prose ul, .prose ol {
+  padding-left: 24px;
+  margin-bottom: 20px;
+}
+
+.prose li {
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--text-2);
+  font-weight: 300;
+  margin-bottom: 8px;
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  padding: 2px 7px;
+  border-radius: 5px;
+}
+
+.prose blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 4px 0 4px 24px;
+  margin: 28px 0;
+}
+
+.prose blockquote p {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-style: italic;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 40px 0;
+}
+
+/* ── GALLERY (breaks out to full container width) ── */
+.gallery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 32px 0;
+}
+
+.gallery-item {
+  aspect-ratio: 16 / 10;
+  border-radius: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.gallery-item span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Full-width gallery that breaks out of the prose column */
+.gallery-full {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 48px 0;
+  max-width: var(--max-w);
+  width: calc(100vw - clamp(48px, 10vw, 96px));
+  margin-left: calc((min(760px, 100%) - min(var(--max-w), calc(100vw - clamp(48px, 10vw, 96px)))) / 2);
+}
+
+/* ── CTA BLOCK ── */
+.cta-block {
+  margin-top: 48px;
+  padding: 32px;
+  border-radius: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.cta-text h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.cta-text p {
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.cta-actions { display: flex; gap: 12px; flex-shrink: 0; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  transition: all 0.25s var(--ease);
+}
+.btn-secondary:hover {
+  border-color: var(--border-hover);
+  color: var(--text-1);
+  background: var(--bg-hover);
+}
+.btn-secondary svg { width: 14px; height: 14px; }
+
+/* ── FOOTER ── */
+.site-footer {
+  border-top: 1px solid var(--border);
+  margin-top: 80px;
+}
+
+.footer-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 32px clamp(24px, 5vw, 48px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer-text { font-size: 14px; color: var(--text-3); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a {
+  font-size: 14px;
+  color: var(--text-3);
+  transition: color 0.2s ease;
+}
+.footer-links a:hover { color: var(--accent); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .writeup-header {
+    grid-template-columns: 1fr;
+  }
+  .writeup-visual { order: -1; aspect-ratio: 16 / 10; }
+  .footer-inner { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 600px) {
+  .gallery { grid-template-columns: 1fr; }
+  .cta-block { flex-direction: column; align-items: flex-start; }
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">Fred Lackey<span>.</span></a>
+    <div class="nav-right">
+      <button class="nav-btn" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="https://github.com/FredLackey" class="nav-btn" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- BACK LINK -->
+<div class="container">
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    All Projects
+  </a>
+</div>
+
+<!-- PROJECT HEADER (same two-column grid as index cards) -->
+<div class="container">
+  <div class="writeup-header">
+    <div class="writeup-header-content">
+      <div class="writeup-title-row">
+        <h1 class="writeup-title">Lottery App</h1>
+        <span class="badge badge-sold"><span class="badge-dot"></span>Sold</span>
+      </div>
+      <p class="writeup-desc">
+        An interactive lottery number generator and historical results tracker. What started as a weekend experiment turned into something people actually used.
+      </p>
+      <div class="writeup-meta-row">
+        <div class="writeup-meta-item">
+          <span class="writeup-meta-label">Stack</span>
+          <span class="writeup-meta-value">Next.js, React, Tailwind</span>
+        </div>
+        <div class="writeup-meta-item">
+          <span class="writeup-meta-label">Released</span>
+          <span class="writeup-meta-value">Mar 2024</span>
+        </div>
+        <div class="writeup-meta-item">
+          <span class="writeup-meta-label">Acquired</span>
+          <span class="writeup-meta-value">Jan 2025</span>
+        </div>
+      </div>
+    </div>
+    <div class="writeup-visual" data-accent="rose">
+      <div class="writeup-visual-inner">
+        <div class="writeup-visual-icon">🎰</div>
+        <div class="writeup-visual-label">Screenshot placeholder</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROSE CONTENT -->
+<div class="container">
+  <div class="prose-wrap">
+    <div class="prose">
+      <h2>Background</h2>
+      <p>
+        This started as a weekend project to play with the Next.js App Router when it was still relatively new. The idea was simple: build a tool that generates lottery numbers, tracks historical drawings, and surfaces frequency patterns over time. Nothing groundbreaking, but a good excuse to learn the framework in a context more interesting than a todo app.
+      </p>
+      <p>
+        The initial version took about two days. Number generation, a basic frequency chart, and a responsive layout. I threw it up on Vercel and forgot about it for a few weeks.
+      </p>
+
+      <h2>What it did</h2>
+      <p>
+        The app supported multiple lottery game formats and let users explore historical data in a few ways:
+      </p>
+      <ul>
+        <li>Simulate random drawings across different game types (Powerball, Mega Millions, Pick 3, etc.)</li>
+        <li>View historical number frequency as heat maps and bar charts</li>
+        <li>Filter results by date range, number position, and game format</li>
+        <li>Save "favorite" number sets and track how they would have performed historically</li>
+      </ul>
+
+      <blockquote>
+        <p>The most popular feature turned out to be the historical "what-if" tracker. People would enter their usual numbers and see how many times they would have won over the past ten years.</p>
+      </blockquote>
+
+      <!-- Screenshot gallery -->
+      <div class="gallery">
+        <div class="gallery-item"><span>Screenshot 1</span></div>
+        <div class="gallery-item"><span>Screenshot 2</span></div>
+        <div class="gallery-item"><span>Screenshot 3</span></div>
+        <div class="gallery-item"><span>Screenshot 4</span></div>
+      </div>
+
+      <h2>Technical decisions</h2>
+      <p>
+        The data layer was intentionally simple. Historical drawing results were stored as flat JSON files, fetched at build time via <code>getStaticProps</code>, and revalidated on a schedule. No database, no API layer. For an app this size, the complexity wasn't justified.
+      </p>
+      <p>
+        The charting was handled with a lightweight canvas library rather than a full-featured charting framework. The goal was fast initial render and smooth interactions on mobile, and the smaller bundle helped with both.
+      </p>
+
+      <h2>Outcome</h2>
+      <p>
+        The app picked up modest organic traffic over a few months, mostly from people searching for lottery statistics. In early 2025, I was approached by a small gaming content company that wanted to integrate it into their existing platform. The acquisition was straightforward and the transition was clean.
+      </p>
+
+      <hr>
+
+      <h3>Lessons learned</h3>
+      <p>
+        Small projects that solve a specific, searchable question tend to find an audience on their own. I didn't promote this anywhere. The traffic came entirely from people searching for lottery number frequency data. Building something that answers a real question, even a trivial one, is more effective than building something technically impressive that nobody is looking for.
+      </p>
+
+      <!-- CTA -->
+      <div class="cta-block">
+        <div class="cta-text">
+          <h3>This project has been sold</h3>
+          <p>The source code is no longer publicly available. Reach out if you have questions.</p>
+        </div>
+        <div class="cta-actions">
+          <a href="index.html" class="btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            All Projects
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span class="footer-text">&copy; 2026 Fred Lackey</span>
+    <div class="footer-links">
+      <a href="https://github.com/FredLackey" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/FredLackeyOfficial" target="_blank" rel="noopener">Official</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const toggle = document.getElementById('themeToggle');
+function setTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('theme', t);
+}
+toggle.addEventListener('click', () => {
+  setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+const saved = localStorage.getItem('theme');
+if (saved) setTheme(saved);
+</script>
+</body>
+</html>

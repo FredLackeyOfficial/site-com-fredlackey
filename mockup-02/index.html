@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fred Lackey — Projects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=Geist+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   VARIABLES
+   ============================================ */
+:root {
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-sans: 'Outfit', -apple-system, sans-serif;
+  --font-mono: 'Geist Mono', 'SF Mono', monospace;
+  --ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --max-w: 1080px;
+}
+
+[data-theme="dark"] {
+  --bg: #141517;
+  --bg-alt: #1a1b1e;
+  --bg-hover: #1e1f23;
+  --border: #27282c;
+  --border-hover: #35363b;
+  --text-1: #e8e6e1;
+  --text-2: #9a978f;
+  --text-3: #5f5d57;
+  --accent: #c9a84c;
+  --accent-dim: rgba(201, 168, 76, 0.12);
+  --tag-tool: #7ea3d1;
+  --tag-data: #6dbfa3;
+  --tag-app: #c490d4;
+  --tag-auth: #d19a7e;
+  --tag-infra: #7ebfd1;
+}
+
+[data-theme="light"] {
+  --bg: #faf9f6;
+  --bg-alt: #f3f1ec;
+  --bg-hover: #edeae3;
+  --border: #e0ddd5;
+  --border-hover: #d0cdc5;
+  --text-1: #1c1b19;
+  --text-2: #6b6860;
+  --text-3: #a09d95;
+  --accent: #9a7d2e;
+  --accent-dim: rgba(154, 125, 46, 0.08);
+  --tag-tool: #4a7bb5;
+  --tag-data: #3a8f73;
+  --tag-app: #9a5eab;
+  --tag-auth: #b57a5a;
+  --tag-infra: #4a9ab5;
+}
+
+/* ============================================
+   RESET
+   ============================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text-1);
+  line-height: 1.6;
+  transition: background 0.4s var(--ease), color 0.4s var(--ease);
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input { font-family: inherit; }
+::selection { background: var(--accent); color: var(--bg); }
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+.container {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 clamp(24px, 4vw, 48px);
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.4s var(--ease);
+}
+
+.header-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 clamp(24px, 4vw, 48px);
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-name {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.site-name-dot { color: var(--accent); }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-3);
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.icon-btn:hover { color: var(--text-2); background: var(--bg-alt); }
+.icon-btn svg { width: 20px; height: 20px; }
+
+.icon-btn .icon-moon,
+[data-theme="light"] .icon-btn .icon-sun { display: none; }
+[data-theme="light"] .icon-btn .icon-moon { display: block; }
+
+/* ============================================
+   INTRO
+   ============================================ */
+.intro {
+  padding: 80px 0 56px;
+  border-bottom: 1px solid var(--border);
+}
+
+.intro-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: fadeIn 0.6s var(--ease) 0.1s forwards;
+}
+
+.intro-heading {
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 5vw, 52px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.8px;
+  margin-bottom: 16px;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: fadeIn 0.6s var(--ease) 0.2s forwards;
+}
+
+.intro-body {
+  font-size: 18px;
+  line-height: 1.75;
+  color: var(--text-2);
+  max-width: 680px;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: fadeIn 0.6s var(--ease) 0.3s forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   CONTROLS
+   ============================================ */
+.controls {
+  padding: 36px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: fadeIn 0.6s var(--ease) 0.45s forwards;
+}
+
+.search-wrap {
+  position: relative;
+}
+
+.search-wrap svg {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--text-3);
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 52px 0 48px;
+  font-size: 16px;
+  color: var(--text-1);
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.search-input::placeholder { color: var(--text-3); }
+.search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.search-key {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-3);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 2px 7px;
+  border-radius: 5px;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+.search-input:focus ~ .search-key { opacity: 0; }
+
+.filter-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  font-size: 15px;
+  font-weight: 400;
+  padding: 8px 20px;
+  border-radius: 100px;
+  color: var(--text-3);
+  border: 1px solid transparent;
+  transition: all 0.25s var(--ease);
+}
+.filter-btn:hover { color: var(--text-2); }
+.filter-btn.active {
+  color: var(--text-1);
+  border-color: var(--border);
+  background: var(--bg-alt);
+}
+
+/* ============================================
+   RESULTS COUNT
+   ============================================ */
+.results-line {
+  padding: 28px 0 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-3);
+  letter-spacing: 0.3px;
+}
+
+/* ============================================
+   PROJECT LIST
+   ============================================ */
+.project-list {
+  padding: 8px 0 80px;
+  list-style: none;
+}
+
+.project-item {
+  border-bottom: 1px solid var(--border);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+}
+
+.project-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.project-link {
+  display: block;
+  padding: 36px 0;
+  transition: background 0.2s ease;
+  position: relative;
+}
+
+.project-link::before {
+  content: '';
+  position: absolute;
+  inset: 0 -24px;
+  border-radius: 8px;
+  background: var(--bg-hover);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: -1;
+}
+
+.project-link:hover::before { opacity: 1; }
+
+.project-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.project-name {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  transition: color 0.2s ease;
+}
+
+.project-link:hover .project-name { color: var(--accent); }
+
+.project-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.project-category {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.project-date {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.project-desc {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text-2);
+  margin-top: 4px;
+}
+
+.project-tech {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.project-tech span {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-3);
+  letter-spacing: 0.2px;
+}
+
+.project-tech span + span::before {
+  content: '·';
+  margin-right: 8px;
+  color: var(--border-hover);
+}
+
+/* Arrow on hover */
+.project-arrow {
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%) translateX(-4px);
+  opacity: 0;
+  color: var(--accent);
+  transition: all 0.3s var(--ease);
+}
+.project-arrow svg { width: 20px; height: 20px; }
+.project-link:hover .project-arrow {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+.empty-state {
+  text-align: center;
+  padding: 64px 0;
+  color: var(--text-3);
+}
+.empty-state p:first-child {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  color: var(--text-2);
+  margin-bottom: 4px;
+}
+.empty-state p:last-child { font-size: 14px; }
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 0;
+}
+
+.footer-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 clamp(24px, 4vw, 48px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-text {
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+.footer-links { display: flex; gap: 20px; }
+.footer-links a {
+  font-size: 14px;
+  color: var(--text-3);
+  transition: color 0.2s ease;
+}
+.footer-links a:hover { color: var(--accent); }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 600px) {
+  .intro { padding: 48px 0 36px; }
+  .project-top { flex-direction: column; gap: 6px; }
+  .project-meta { order: -1; }
+  .project-arrow { display: none; }
+  .search-key { display: none; }
+  .footer-inner { flex-direction: column; gap: 12px; align-items: flex-start; }
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="#" class="site-name">Fred Lackey<span class="site-name-dot">.</span></a>
+    <div class="header-right">
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="https://github.com/FredLackey" class="icon-btn" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- INTRO -->
+<div class="container">
+  <section class="intro">
+    <div class="intro-label">Projects</div>
+    <h1 class="intro-heading">Things I've built along the way</h1>
+    <p class="intro-body">
+      Most of these started as quick solutions to problems I ran into at work. Some grew into proper libraries, others stayed small and useful. All of them are open source.
+    </p>
+  </section>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" class="search-input" id="searchInput" placeholder="Search projects..." autocomplete="off" spellcheck="false">
+      <span class="search-key">/</span>
+    </div>
+    <div class="filter-row" id="filterRow">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="devtools">Developer Tools</button>
+      <button class="filter-btn" data-filter="data">Data &amp; Parsing</button>
+      <button class="filter-btn" data-filter="webapps">Web Apps</button>
+      <button class="filter-btn" data-filter="auth">Auth &amp; Security</button>
+      <button class="filter-btn" data-filter="infra">Infrastructure</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results-line" id="resultsLine"></div>
+
+  <!-- LIST -->
+  <ul class="project-list" id="projectList"></ul>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span class="footer-text">&copy; 2026 Fred Lackey</span>
+    <div class="footer-links">
+      <a href="https://github.com/FredLackey" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/FredLackeyOfficial" target="_blank" rel="noopener">Official</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const projects = [
+  {
+    name: 'JWT Tools',
+    desc: 'A browser-based utility for encoding and decoding JSON Web Tokens. Paste a token to inspect the header and payload, or build one from scratch to test against your auth flow. Useful when you\'re debugging middleware and need a quick sanity check without spinning up Postman.',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['React', 'Vite'],
+    date: '2024-09',
+    repo: 'FredLackeyOfficial/jwt-tools-ui'
+  },
+  {
+    name: 'Bracketter',
+    desc: 'Parses tokenized strings that use various bracket formats — curly braces, square brackets, angle brackets, percent signs, and more. Handles nested expressions and lets you define custom delimiters. Born out of a config templating project where the standard parsers kept choking on edge cases.',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['Node.js', 'TypeScript'],
+    date: '2023-06',
+    repo: 'FredLackey/bracketter'
+  },
+  {
+    name: 'File Date Organizer',
+    desc: 'Reads file metadata and creation dates, then sorts everything into clean date-based folder hierarchies. Mostly written to deal with the chaos of dumping thousands of photos off a phone, but it works for any file type.',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['Node.js'],
+    date: '2023-03',
+    repo: 'FredLackeyOfficial/file-date-organizer'
+  },
+  {
+    name: 'SafeMove',
+    desc: 'A recursive file copy and move utility with built-in backup protection. The no-overwrite mode ensures nothing gets accidentally clobbered. I wrote it after losing a directory of config files during a botched migration script.',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['Node.js', 'CLI'],
+    date: '2022-11',
+    repo: 'FredLackey/safemove'
+  },
+  {
+    name: 'File Line Replacer',
+    desc: 'Matches and replaces multiple lines across large text files while preserving whitespace and formatting. Designed for bulk config transformations where sed gets unwieldy and you need something that understands multi-line context.',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['Node.js', 'CLI'],
+    date: '2022-08',
+    repo: 'FredLackey/file-line-replacer'
+  },
+  {
+    name: 'HCL Parser',
+    desc: 'Parses Terraform HCL files and extracts node hierarchies, resource definitions, and variable blocks into structured data. Includes a diffing mode for comparing two infrastructure configurations side by side.',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['Node.js', 'Terraform'],
+    date: '2023-01',
+    repo: 'FredLackey/hcl-parser'
+  },
+  {
+    name: 'DevUtils CLI',
+    desc: 'A config-driven CLI for bootstrapping development environments. Define your setup in a single file — packages, dotfiles, git config, shell aliases — and replicate it on any machine. Aimed at reducing the "new laptop" setup from a day to a few minutes.',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['Node.js', 'CLI'],
+    date: '2023-09',
+    repo: 'FredLackey/devutils-cli'
+  },
+  {
+    name: 'RestUtils',
+    desc: 'Takes standard Node.js modules and exposes their exported functions as REST endpoints with minimal boilerplate. Handles route generation, input validation, and error formatting so you can focus on the business logic.',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['Node.js', 'Express'],
+    date: '2022-04',
+    repo: 'restutils/restutils'
+  },
+  {
+    name: 'XLSX Contacts Parser',
+    desc: 'Extracts structured contact lists from Excel spreadsheets by intelligently identifying name and email columns, even when the column headers vary across files. Handles the messy reality of data exports from CRMs and mailing lists.',
+    category: 'data',
+    categoryLabel: 'Data & Parsing',
+    tech: ['Node.js'],
+    date: '2022-05',
+    repo: 'FredLackey/xlsx-contacts-parser'
+  },
+  {
+    name: 'XLSX to JSON',
+    desc: 'Converts Excel files — including password-protected ones — to clean JSON output. Supports sheet selection, type inference for numeric and date columns, and handles both XLS and XLSX formats transparently.',
+    category: 'data',
+    categoryLabel: 'Data & Parsing',
+    tech: ['Node.js'],
+    date: '2022-03',
+    repo: 'FredLackey/xlsx-to-json-parser'
+  },
+  {
+    name: 'CSV Contacts Parser',
+    desc: 'Pulls contact data from CSV files and normalizes it into a consistent structure. Smart field detection for names, email addresses, phone numbers, and physical addresses, regardless of how the source file labels its columns.',
+    category: 'data',
+    categoryLabel: 'Data & Parsing',
+    tech: ['Node.js'],
+    date: '2022-02',
+    repo: 'FredLackey/csv-contacts-parser'
+  },
+  {
+    name: 'Cleaner Node TS',
+    desc: 'A TypeScript utility library with over 200 functions covering string manipulation, array operations, validation, file system helpers, date and time formatting, cryptographic hashing, and HTTP utilities. The kind of grab-bag library you end up building after copy-pasting the same helpers across enough projects.',
+    category: 'data',
+    categoryLabel: 'Data & Parsing',
+    tech: ['TypeScript', 'Node.js'],
+    date: '2024-01',
+    repo: 'FredLackey/cleaner-node-ts'
+  },
+  {
+    name: 'To-DTO',
+    desc: 'Converts complex object graphs into safe, publicly consumable data transfer objects. Strips internal fields, flattens nested references, and applies configurable field mapping rules so your API responses never accidentally expose internal data.',
+    category: 'data',
+    categoryLabel: 'Data & Parsing',
+    tech: ['Node.js'],
+    date: '2022-07',
+    repo: 'FredLackey/to-dto'
+  },
+  {
+    name: 'DbSchema Parser',
+    desc: 'Reads DbSchema project files and extracts table definitions, column types, relationships, constraints, and indexes into structured JSON. Useful for generating documentation or diffing schema changes outside of the DbSchema UI.',
+    category: 'data',
+    categoryLabel: 'Data & Parsing',
+    tech: ['Node.js'],
+    date: '2023-04',
+    repo: 'dbschema/dbschema'
+  },
+  {
+    name: 'Lottery App',
+    desc: 'An interactive lottery number generator and historical results tracker. Simulate drawings, analyze number frequency patterns, and explore statistical trends. A fun side project that started as an excuse to learn Next.js App Router.',
+    category: 'webapps',
+    categoryLabel: 'Web Apps',
+    tech: ['Next.js', 'React'],
+    date: '2024-03',
+    repo: 'FredLackey/lottery-nextjs'
+  },
+  {
+    name: 'Open Resume',
+    desc: 'An open-source resume builder with real-time PDF preview. Uses ATS-friendly formatting and a clean, professional design system. Import an existing resume to parse it, or start from a template and customize from there.',
+    category: 'webapps',
+    categoryLabel: 'Web Apps',
+    tech: ['React', 'PDF'],
+    date: '2023-11',
+    repo: 'FredLackey/open-resume'
+  },
+  {
+    name: 'CRMS UI',
+    desc: 'A management interface for cyber range training environments. Handles courses, student enrollments, host provisioning, and resource allocation tracking. Built for an internal team that needed to coordinate training infrastructure without spreadsheets.',
+    category: 'webapps',
+    categoryLabel: 'Web Apps',
+    tech: ['React', 'Material-UI'],
+    date: '2023-08',
+    repo: 'FredLackey/crms-ui'
+  },
+  {
+    name: 'Messenger Clone',
+    desc: 'A real-time messaging application with typing indicators, read receipts, and threaded conversations. Supports image sharing and online status. Built with Pusher for WebSocket communication and Prisma for the data layer.',
+    category: 'webapps',
+    categoryLabel: 'Web Apps',
+    tech: ['Next.js', 'Pusher', 'Prisma'],
+    date: '2023-10',
+    repo: 'FredLackey/messenger-clone'
+  },
+  {
+    name: 'GitHub Cleanup',
+    desc: 'A management tool for auditing and organizing GitHub repositories across your organizations. Helps you identify stale repos, archive old projects, and get a handle on the sprawl that accumulates over years of active development.',
+    category: 'webapps',
+    categoryLabel: 'Web Apps',
+    tech: ['React', 'GitHub API'],
+    date: '2024-06',
+    repo: 'FredLackeyOfficial/bolt-github-cleanup'
+  },
+  {
+    name: 'React JWT Callback',
+    desc: 'A reference implementation for handling JWT callbacks from external authorization servers. Demonstrates clean token extraction, storage patterns, and redirect handling. Meant to be forked and adapted rather than installed as a dependency.',
+    category: 'auth',
+    categoryLabel: 'Auth & Security',
+    tech: ['React', 'JWT'],
+    date: '2022-09',
+    repo: 'FredLackey/react-jwt-callback'
+  },
+  {
+    name: 'Protected Routes',
+    desc: 'Demonstrates route guarding patterns with React Router. Covers redirecting unauthenticated users, preserving intended destinations after login, and handling role-based access with clean component composition.',
+    category: 'auth',
+    categoryLabel: 'Auth & Security',
+    tech: ['React', 'React Router'],
+    date: '2022-10',
+    repo: 'FredLackey/react-protected-routes'
+  },
+  {
+    name: 'Passport Entrance',
+    desc: 'An Express and Passport.js example that wires up social login with Facebook and Google, including account linking for users who authenticate through multiple providers. Handles the edge cases that the Passport docs tend to skip over.',
+    category: 'auth',
+    categoryLabel: 'Auth & Security',
+    tech: ['Express', 'Passport.js'],
+    date: '2022-06',
+    repo: 'FredLackey/express-passport-entrance'
+  },
+  {
+    name: 'Passwordless Auth',
+    desc: 'A passwordless authentication flow using magic links and one-time codes. No passwords to store, hash, leak, or reset. Demonstrates the full loop from email delivery through token verification and session creation.',
+    category: 'auth',
+    categoryLabel: 'Auth & Security',
+    tech: ['Next.js'],
+    date: '2024-04',
+    repo: 'FredLackey/passwordless'
+  },
+  {
+    name: 'CICD.sh',
+    desc: 'Lightweight deployment automation written in Bash. Monitors git repositories for changes and deploys using a three-repo pattern: source (your code), data (config and secrets), and deploy (release artifacts). Simple enough to run on a $5 VPS.',
+    category: 'infra',
+    categoryLabel: 'Infrastructure',
+    tech: ['Bash', 'Git'],
+    date: '2021-12',
+    repo: 'FredLackey/cicd.sh'
+  },
+  {
+    name: 'AWS SPA Boilerplate',
+    desc: 'A production-ready monorepo for provisioning AWS infrastructure to host single-page applications. Sets up CloudFront distributions, Lambda@Edge functions, Route53 DNS records, and S3 buckets with proper cache invalidation.',
+    category: 'infra',
+    categoryLabel: 'Infrastructure',
+    tech: ['AWS', 'Terraform', 'Node.js'],
+    date: '2023-02',
+    repo: 'FredLackey/aws-spa-boilerplate'
+  },
+  {
+    name: 'Media Tools',
+    desc: 'A collection of utilities for working with multimedia files at scale. Tag editing, format conversion, and batch rename operations for MP3, MP4, and M4A files. Written to manage a personal media library that had gotten out of hand.',
+    category: 'infra',
+    categoryLabel: 'Infrastructure',
+    tech: ['Node.js', 'CLI'],
+    date: '2023-05',
+    repo: 'FredLackey/media-tools'
+  }
+];
+
+// Sort by date descending
+projects.sort((a, b) => b.date.localeCompare(a.date));
+
+const searchInput = document.getElementById('searchInput');
+const filterRow = document.getElementById('filterRow');
+const projectList = document.getElementById('projectList');
+const resultsLine = document.getElementById('resultsLine');
+
+let activeFilter = 'all';
+let query = '';
+
+function formatDate(d) {
+  const [y, m] = d.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[parseInt(m)-1]} ${y}`;
+}
+
+function getFiltered() {
+  return projects.filter(p => {
+    const catOk = activeFilter === 'all' || p.category === activeFilter;
+    const qOk = !query ||
+      p.name.toLowerCase().includes(query) ||
+      p.desc.toLowerCase().includes(query) ||
+      p.tech.some(t => t.toLowerCase().includes(query)) ||
+      p.categoryLabel.toLowerCase().includes(query);
+    return catOk && qOk;
+  });
+}
+
+function render() {
+  const filtered = getFiltered();
+  resultsLine.textContent = `${filtered.length} project${filtered.length !== 1 ? 's' : ''}`;
+
+  if (!filtered.length) {
+    projectList.innerHTML = `
+      <li class="empty-state" style="list-style:none">
+        <p>No matching projects</p>
+        <p>Try a different search term or category</p>
+      </li>`;
+    return;
+  }
+
+  projectList.innerHTML = filtered.map((p, i) => `
+    <li class="project-item" style="transition-delay: ${Math.min(i * 30, 300)}ms">
+      <a href="https://github.com/${p.repo}" class="project-link" target="_blank" rel="noopener">
+        <div class="project-top">
+          <span class="project-name">${p.name}</span>
+          <div class="project-meta">
+            <span class="project-category">${p.categoryLabel}</span>
+            <span class="project-date">${formatDate(p.date)}</span>
+          </div>
+        </div>
+        <p class="project-desc">${p.desc}</p>
+        <div class="project-tech">${p.tech.map(t => `<span>${t}</span>`).join('')}</div>
+        <div class="project-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+    </li>
+  `).join('');
+
+  requestAnimationFrame(() => {
+    projectList.querySelectorAll('.project-item').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), i * 30);
+    });
+  });
+}
+
+// Search
+searchInput.addEventListener('input', e => {
+  query = e.target.value.toLowerCase().trim();
+  render();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && document.activeElement !== searchInput) {
+    e.preventDefault();
+    searchInput.focus();
+  }
+  if (e.key === 'Escape' && document.activeElement === searchInput) {
+    searchInput.blur();
+    searchInput.value = '';
+    query = '';
+    render();
+  }
+});
+
+// Filters
+filterRow.addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  filterRow.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeFilter = btn.dataset.filter;
+  render();
+});
+
+// Theme
+const themeToggle = document.getElementById('themeToggle');
+function setTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('theme', t);
+}
+themeToggle.addEventListener('click', () => {
+  setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+const saved = localStorage.getItem('theme');
+if (saved) setTheme(saved);
+
+render();
+</script>
+</body>
+</html>

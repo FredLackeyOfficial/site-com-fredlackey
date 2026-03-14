@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fred Lackey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --max-w: 1100px;
+}
+
+[data-theme="dark"] {
+  --bg: #111113;
+  --bg-surface: #18181b;
+  --bg-hover: #1f1f23;
+  --border: #27272a;
+  --border-hover: #3f3f46;
+  --text-1: #f4f4f5;
+  --text-2: #a1a1aa;
+  --text-3: #63636b;
+  --accent: #c9a227;
+  --accent-soft: rgba(201, 162, 39, 0.1);
+
+  --badge-active-bg: rgba(34, 197, 94, 0.1);
+  --badge-active-border: rgba(34, 197, 94, 0.25);
+  --badge-active-text: #4ade80;
+  --badge-active-dot: #22c55e;
+
+  --badge-sold-bg: rgba(168, 130, 58, 0.1);
+  --badge-sold-border: rgba(168, 130, 58, 0.25);
+  --badge-sold-text: #d4a843;
+  --badge-sold-dot: #c9a227;
+
+  --badge-archived-bg: rgba(113, 113, 122, 0.1);
+  --badge-archived-border: rgba(113, 113, 122, 0.25);
+  --badge-archived-text: #a1a1aa;
+  --badge-archived-dot: #71717a;
+
+  --badge-legacy-bg: rgba(161, 98, 247, 0.08);
+  --badge-legacy-border: rgba(161, 98, 247, 0.2);
+  --badge-legacy-text: #b490f0;
+  --badge-legacy-dot: #a162f7;
+}
+
+[data-theme="light"] {
+  --bg: #fafaf9;
+  --bg-surface: #ffffff;
+  --bg-hover: #f5f5f4;
+  --border: #e4e4e7;
+  --border-hover: #d4d4d8;
+  --text-1: #18181b;
+  --text-2: #71717a;
+  --text-3: #a1a1aa;
+  --accent: #92710e;
+  --accent-soft: rgba(146, 113, 14, 0.07);
+
+  --badge-active-bg: rgba(34, 197, 94, 0.07);
+  --badge-active-border: rgba(34, 197, 94, 0.2);
+  --badge-active-text: #16a34a;
+  --badge-active-dot: #22c55e;
+
+  --badge-sold-bg: rgba(146, 113, 14, 0.07);
+  --badge-sold-border: rgba(146, 113, 14, 0.2);
+  --badge-sold-text: #92710e;
+  --badge-sold-dot: #b8960a;
+
+  --badge-archived-bg: rgba(113, 113, 122, 0.07);
+  --badge-archived-border: rgba(113, 113, 122, 0.2);
+  --badge-archived-text: #52525b;
+  --badge-archived-dot: #71717a;
+
+  --badge-legacy-bg: rgba(126, 58, 242, 0.06);
+  --badge-legacy-border: rgba(126, 58, 242, 0.15);
+  --badge-legacy-text: #7c3aed;
+  --badge-legacy-dot: #8b5cf6;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-1);
+  line-height: 1.6;
+  transition: background 0.4s var(--ease), color 0.4s var(--ease);
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+::selection { background: var(--accent); color: #fff; }
+
+/* ── NAV ── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.4s var(--ease);
+}
+
+.nav-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 clamp(24px, 5vw, 48px);
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.nav-brand span { color: var(--accent); }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-3);
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.nav-btn:hover { color: var(--text-2); background: var(--bg-hover); }
+.nav-btn svg { width: 20px; height: 20px; }
+
+.nav-btn .icon-moon,
+[data-theme="light"] .nav-btn .icon-sun { display: none; }
+[data-theme="light"] .nav-btn .icon-moon { display: block; }
+
+/* ── HERO ── */
+.hero {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: clamp(64px, 10vw, 120px) clamp(24px, 5vw, 48px) clamp(48px, 8vw, 80px);
+}
+
+.hero-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+  opacity: 0; transform: translateY(10px);
+  animation: up 0.7s var(--ease) 0.1s forwards;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 6vw, 64px);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -1.5px;
+  margin-bottom: 24px;
+  max-width: 800px;
+  opacity: 0; transform: translateY(10px);
+  animation: up 0.7s var(--ease) 0.2s forwards;
+}
+
+.hero-desc {
+  font-size: 18px;
+  line-height: 1.8;
+  color: var(--text-2);
+  max-width: 620px;
+  font-weight: 300;
+  opacity: 0; transform: translateY(10px);
+  animation: up 0.7s var(--ease) 0.35s forwards;
+}
+
+@keyframes up {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── DIVIDER ── */
+.section-divider {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 clamp(24px, 5vw, 48px);
+}
+
+.section-divider hr {
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+/* ── TAB STRIP ── */
+.tab-strip {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 clamp(24px, 5vw, 48px);
+}
+
+.tab-strip-inner {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.tab-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 28px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-3);
+  text-decoration: none;
+  position: relative;
+  transition: color 0.25s var(--ease);
+  white-space: nowrap;
+}
+
+.tab-link:hover {
+  color: var(--text-2);
+}
+
+.tab-link.active {
+  color: var(--text-1);
+  font-weight: 500;
+}
+
+.tab-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px 2px 0 0;
+}
+
+.tab-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.tab-link.active .tab-icon {
+  opacity: 1;
+}
+
+.tab-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-3);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  padding: 1px 7px;
+  border-radius: 100px;
+  line-height: 1.4;
+}
+
+.tab-link.active .tab-count {
+  background: var(--accent-soft);
+  border-color: transparent;
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .tab-link { padding: 16px 16px; font-size: 14px; }
+  .tab-icon { display: none; }
+}
+
+@media (max-width: 480px) {
+  .tab-strip-inner { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tab-link { padding: 14px 14px; font-size: 13px; }
+}
+
+/* ── PROJECT SHOWCASE ── */
+.showcase {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 clamp(24px, 5vw, 48px);
+}
+
+.project {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: start;
+  padding: clamp(48px, 7vw, 80px) 0;
+  border-bottom: 1px solid var(--border);
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+
+.project.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.project:last-child { border-bottom: none; }
+
+.project-content { display: flex; flex-direction: column; gap: 20px; }
+
+.project-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.project-name {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.5vw, 36px);
+  font-weight: 500;
+  letter-spacing: -0.8px;
+  line-height: 1.2;
+}
+
+/* ── STATUS BADGES ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 100px;
+  border: 1px solid;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.badge-active {
+  background: var(--badge-active-bg);
+  border-color: var(--badge-active-border);
+  color: var(--badge-active-text);
+}
+.badge-active .badge-dot { background: var(--badge-active-dot); }
+
+.badge-sold {
+  background: var(--badge-sold-bg);
+  border-color: var(--badge-sold-border);
+  color: var(--badge-sold-text);
+}
+.badge-sold .badge-dot { background: var(--badge-sold-dot); }
+
+.badge-archived {
+  background: var(--badge-archived-bg);
+  border-color: var(--badge-archived-border);
+  color: var(--badge-archived-text);
+}
+.badge-archived .badge-dot { background: var(--badge-archived-dot); }
+
+.badge-legacy {
+  background: var(--badge-legacy-bg);
+  border-color: var(--badge-legacy-border);
+  color: var(--badge-legacy-text);
+}
+.badge-legacy .badge-dot { background: var(--badge-legacy-dot); }
+
+.project-desc {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--text-2);
+  font-weight: 300;
+}
+
+.project-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 4px;
+}
+
+.project-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.project-meta-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.project-meta-value {
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.project-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  transition: all 0.25s var(--ease);
+}
+.btn-primary:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px var(--accent-soft);
+}
+.btn-primary svg { width: 14px; height: 14px; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  transition: all 0.25s var(--ease);
+}
+.btn-secondary:hover {
+  border-color: var(--border-hover);
+  color: var(--text-1);
+  background: var(--bg-hover);
+}
+.btn-secondary svg { width: 14px; height: 14px; }
+
+/* ── PROJECT VISUAL ── */
+.project-visual {
+  aspect-ratio: 4 / 3;
+  border-radius: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.3s ease;
+}
+
+.project:hover .project-visual { border-color: var(--border-hover); }
+
+.project-visual-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px;
+  text-align: center;
+}
+
+.project-visual-icon {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.project-visual-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Subtle mesh gradient per project */
+.project-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  transition: opacity 0.4s ease;
+}
+
+.project:hover .project-visual::before { opacity: 0.7; }
+
+.project-visual[data-accent="amber"]::before {
+  background: radial-gradient(ellipse at 30% 40%, rgba(201, 162, 39, 0.08) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 70%, rgba(201, 162, 39, 0.05) 0%, transparent 50%);
+}
+.project-visual[data-accent="emerald"]::before {
+  background: radial-gradient(ellipse at 30% 40%, rgba(34, 197, 94, 0.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 70%, rgba(34, 197, 94, 0.04) 0%, transparent 50%);
+}
+.project-visual[data-accent="violet"]::before {
+  background: radial-gradient(ellipse at 30% 40%, rgba(139, 92, 246, 0.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 70%, rgba(139, 92, 246, 0.04) 0%, transparent 50%);
+}
+.project-visual[data-accent="slate"]::before {
+  background: radial-gradient(ellipse at 30% 40%, rgba(148, 163, 184, 0.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 70%, rgba(148, 163, 184, 0.04) 0%, transparent 50%);
+}
+.project-visual[data-accent="rose"]::before {
+  background: radial-gradient(ellipse at 30% 40%, rgba(244, 63, 94, 0.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 70%, rgba(244, 63, 94, 0.04) 0%, transparent 50%);
+}
+.project-visual[data-accent="blue"]::before {
+  background: radial-gradient(ellipse at 30% 40%, rgba(59, 130, 246, 0.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 70%, rgba(59, 130, 246, 0.04) 0%, transparent 50%);
+}
+
+/* Placeholder for screenshots — swap in real images later */
+.project-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+}
+
+/* ── FOOTER ── */
+.site-footer {
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+
+.footer-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 32px clamp(24px, 5vw, 48px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer-text {
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+.footer-links { display: flex; gap: 24px; }
+.footer-links a {
+  font-size: 14px;
+  color: var(--text-3);
+  transition: color 0.2s ease;
+}
+.footer-links a:hover { color: var(--accent); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .project {
+    grid-template-columns: 1fr;
+  }
+  .project-visual { order: -1; aspect-ratio: 16 / 10; }
+  .hero { padding-top: 56px; padding-bottom: 40px; }
+  .footer-inner { flex-direction: column; align-items: flex-start; }
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">Fred Lackey<span>.</span></a>
+    <div class="nav-right">
+      <button class="nav-btn" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="https://github.com/FredLackey" class="nav-btn" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">Work</div>
+  <h1 class="hero-title">Software I've shipped, sold, and sometimes let go of</h1>
+  <p class="hero-desc">
+    A handful of products and projects I've built over the years. Some are still running, a few were acquired, and others have been retired. Each one taught me something worth keeping.
+  </p>
+</section>
+
+<div class="section-divider"><hr></div>
+
+<!-- TAB STRIP -->
+<div class="tab-strip">
+  <nav class="tab-strip-inner">
+    <a href="index.html" class="tab-link active">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Side Projects
+      <span class="tab-count">6</span>
+    </a>
+    <a href="professional.html" class="tab-link">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      Professional
+      <span class="tab-count">0</span>
+    </a>
+    <a href="ventures.html" class="tab-link">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Funded &amp; Sold
+      <span class="tab-count">0</span>
+    </a>
+  </nav>
+</div>
+
+<!-- SHOWCASE -->
+<div class="showcase" id="showcase">
+
+  <!-- ─── PROJECT: Active example ─── -->
+  <article class="project">
+    <div class="project-content">
+      <div class="project-header">
+        <h2 class="project-name">JWT Tools</h2>
+        <span class="badge badge-active"><span class="badge-dot"></span>Active</span>
+      </div>
+      <p class="project-desc">
+        A browser-based utility for encoding and decoding JSON Web Tokens. Paste any token to inspect its header and payload, or assemble one from scratch to test against your auth middleware. No server calls — everything runs client-side.
+      </p>
+      <div class="project-meta-row">
+        <div class="project-meta-item">
+          <span class="project-meta-label">Stack</span>
+          <span class="project-meta-value">React, Vite, TypeScript</span>
+        </div>
+        <div class="project-meta-item">
+          <span class="project-meta-label">Released</span>
+          <span class="project-meta-value">Sep 2024</span>
+        </div>
+      </div>
+      <div class="project-actions">
+        <a href="#" class="btn-primary">
+          Visit Site
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </a>
+        <a href="#" class="btn-secondary">Source Code</a>
+      </div>
+    </div>
+    <div class="project-visual" data-accent="amber">
+      <div class="project-visual-inner">
+        <div class="project-visual-icon">🔑</div>
+        <div class="project-visual-label">Screenshot placeholder</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ─── PROJECT: Active example ─── -->
+  <article class="project">
+    <div class="project-content">
+      <div class="project-header">
+        <h2 class="project-name">Open Resume</h2>
+        <span class="badge badge-active"><span class="badge-dot"></span>Active</span>
+      </div>
+      <p class="project-desc">
+        An open-source resume builder with real-time PDF preview. Designed for ATS-friendly formatting with a clean, professional layout. Import an existing resume to parse and restructure it, or build from a template.
+      </p>
+      <div class="project-meta-row">
+        <div class="project-meta-item">
+          <span class="project-meta-label">Stack</span>
+          <span class="project-meta-value">React, PDF Generation</span>
+        </div>
+        <div class="project-meta-item">
+          <span class="project-meta-label">Released</span>
+          <span class="project-meta-value">Nov 2023</span>
+        </div>
+      </div>
+      <div class="project-actions">
+        <a href="#" class="btn-primary">
+          Visit Site
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </a>
+        <a href="#" class="btn-secondary">Source Code</a>
+      </div>
+    </div>
+    <div class="project-visual" data-accent="emerald">
+      <div class="project-visual-inner">
+        <div class="project-visual-icon">📄</div>
+        <div class="project-visual-label">Screenshot placeholder</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ─── PROJECT: Sold example ─── -->
+  <article class="project">
+    <div class="project-content">
+      <div class="project-header">
+        <h2 class="project-name">Lottery App</h2>
+        <span class="badge badge-sold"><span class="badge-dot"></span>Sold</span>
+      </div>
+      <p class="project-desc">
+        An interactive lottery number generator and historical results tracker built with Next.js. Simulated drawings, analyzed number frequency patterns, and explored statistical trends across multiple game formats.
+      </p>
+      <div class="project-meta-row">
+        <div class="project-meta-item">
+          <span class="project-meta-label">Stack</span>
+          <span class="project-meta-value">Next.js, React</span>
+        </div>
+        <div class="project-meta-item">
+          <span class="project-meta-label">Released</span>
+          <span class="project-meta-value">Mar 2024</span>
+        </div>
+        <div class="project-meta-item">
+          <span class="project-meta-label">Acquired</span>
+          <span class="project-meta-value">Jan 2025</span>
+        </div>
+      </div>
+      <div class="project-actions">
+        <a href="writeup.html" class="btn-secondary">
+          Read Write-up
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="project-visual" data-accent="rose">
+      <div class="project-visual-inner">
+        <div class="project-visual-icon">🎰</div>
+        <div class="project-visual-label">Screenshot placeholder</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ─── PROJECT: Archived example ─── -->
+  <article class="project">
+    <div class="project-content">
+      <div class="project-header">
+        <h2 class="project-name">CRMS</h2>
+        <span class="badge badge-archived"><span class="badge-dot"></span>Archived</span>
+      </div>
+      <p class="project-desc">
+        A management interface for cyber range training environments. Handled course catalogs, student enrollments, host provisioning, and resource allocation tracking. Built for an internal team that needed to coordinate training infrastructure across multiple facilities.
+      </p>
+      <div class="project-meta-row">
+        <div class="project-meta-item">
+          <span class="project-meta-label">Stack</span>
+          <span class="project-meta-value">React, Material-UI, Node.js</span>
+        </div>
+        <div class="project-meta-item">
+          <span class="project-meta-label">Released</span>
+          <span class="project-meta-value">Aug 2023</span>
+        </div>
+        <div class="project-meta-item">
+          <span class="project-meta-label">Archived</span>
+          <span class="project-meta-value">Jun 2025</span>
+        </div>
+      </div>
+      <div class="project-actions">
+        <a href="writeup.html" class="btn-secondary">
+          Read Write-up
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="project-visual" data-accent="slate">
+      <div class="project-visual-inner">
+        <div class="project-visual-icon">🎯</div>
+        <div class="project-visual-label">Screenshot placeholder</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ─── PROJECT: Legacy example ─── -->
+  <article class="project">
+    <div class="project-content">
+      <div class="project-header">
+        <h2 class="project-name">Messenger Clone</h2>
+        <span class="badge badge-legacy"><span class="badge-dot"></span>Legacy</span>
+      </div>
+      <p class="project-desc">
+        A real-time messaging application with typing indicators, read receipts, and threaded conversations. Supported image sharing and online presence. Originally a learning project that grew into a usable internal communication tool before being replaced.
+      </p>
+      <div class="project-meta-row">
+        <div class="project-meta-item">
+          <span class="project-meta-label">Stack</span>
+          <span class="project-meta-value">Next.js, Pusher, Prisma</span>
+        </div>
+        <div class="project-meta-item">
+          <span class="project-meta-label">Released</span>
+          <span class="project-meta-value">Oct 2023</span>
+        </div>
+      </div>
+      <div class="project-actions">
+        <a href="writeup.html" class="btn-secondary">
+          Read Write-up
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="#" class="btn-secondary">Source Code</a>
+      </div>
+    </div>
+    <div class="project-visual" data-accent="violet">
+      <div class="project-visual-inner">
+        <div class="project-visual-icon">💬</div>
+        <div class="project-visual-label">Screenshot placeholder</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ─── PROJECT: Active example ─── -->
+  <article class="project">
+    <div class="project-content">
+      <div class="project-header">
+        <h2 class="project-name">GitHub Cleanup</h2>
+        <span class="badge badge-active"><span class="badge-dot"></span>Active</span>
+      </div>
+      <p class="project-desc">
+        A management tool for auditing and organizing GitHub repositories across multiple organizations. Identifies stale repos, surfaces archival candidates, and helps get a handle on the inevitable sprawl that comes with years of active development.
+      </p>
+      <div class="project-meta-row">
+        <div class="project-meta-item">
+          <span class="project-meta-label">Stack</span>
+          <span class="project-meta-value">React, GitHub API</span>
+        </div>
+        <div class="project-meta-item">
+          <span class="project-meta-label">Released</span>
+          <span class="project-meta-value">Jun 2024</span>
+        </div>
+      </div>
+      <div class="project-actions">
+        <a href="#" class="btn-primary">
+          Visit Site
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </a>
+        <a href="#" class="btn-secondary">Source Code</a>
+      </div>
+    </div>
+    <div class="project-visual" data-accent="blue">
+      <div class="project-visual-inner">
+        <div class="project-visual-icon">🧹</div>
+        <div class="project-visual-label">Screenshot placeholder</div>
+      </div>
+    </div>
+  </article>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span class="footer-text">&copy; 2026 Fred Lackey</span>
+    <div class="footer-links">
+      <a href="https://github.com/FredLackey" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/FredLackeyOfficial" target="_blank" rel="noopener">Official</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Theme
+const toggle = document.getElementById('themeToggle');
+function setTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('theme', t);
+}
+toggle.addEventListener('click', () => {
+  setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+const saved = localStorage.getItem('theme');
+if (saved) setTheme(saved);
+
+// Scroll reveal
+const projects = document.querySelectorAll('.project');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+projects.forEach(p => observer.observe(p));
+</script>
+</body>
+</html>

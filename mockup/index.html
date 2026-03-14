@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fred Lackey — Developer Tools & Apps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   CSS VARIABLES & THEME
+   ============================================ */
+:root {
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #07070a;
+  --bg-secondary: #0e0e13;
+  --bg-tertiary: #14141b;
+  --bg-card: #111118;
+  --bg-card-hover: #18181f;
+  --bg-elevated: #1a1a22;
+  --bg-input: #111118;
+
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-medium: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.15);
+
+  --text-primary: #f0ede8;
+  --text-secondary: #8a8a97;
+  --text-tertiary: #55555f;
+  --text-inverse: #07070a;
+
+  --accent: #d4a843;
+  --accent-hover: #e0b94f;
+  --accent-subtle: rgba(212, 168, 67, 0.1);
+  --accent-glow: rgba(212, 168, 67, 0.15);
+
+  --tag-devtools: #5b8def;
+  --tag-devtools-bg: rgba(91, 141, 239, 0.1);
+  --tag-data: #45c4a3;
+  --tag-data-bg: rgba(69, 196, 163, 0.1);
+  --tag-webapps: #d97bf0;
+  --tag-webapps-bg: rgba(217, 123, 240, 0.1);
+  --tag-auth: #ef7b5b;
+  --tag-auth-bg: rgba(239, 123, 91, 0.1);
+  --tag-infra: #7bc4f0;
+  --tag-infra-bg: rgba(123, 196, 240, 0.1);
+
+  --noise-opacity: 0.03;
+  --shadow-card: 0 1px 2px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
+  --shadow-card-hover: 0 2px 4px rgba(0,0,0,0.3), 0 8px 32px rgba(0,0,0,0.3);
+  --shadow-glow: 0 0 40px rgba(212, 168, 67, 0.08);
+}
+
+[data-theme="light"] {
+  --bg-primary: #f5f3ee;
+  --bg-secondary: #edeae3;
+  --bg-tertiary: #e5e2db;
+  --bg-card: #ffffff;
+  --bg-card-hover: #fafaf8;
+  --bg-elevated: #ffffff;
+  --bg-input: #ffffff;
+
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-medium: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.15);
+
+  --text-primary: #1a1a1f;
+  --text-secondary: #6b6b77;
+  --text-tertiary: #9b9ba7;
+  --text-inverse: #f0ede8;
+
+  --accent: #b8892a;
+  --accent-hover: #a07520;
+  --accent-subtle: rgba(184, 137, 42, 0.08);
+  --accent-glow: rgba(184, 137, 42, 0.1);
+
+  --tag-devtools: #3b6dd0;
+  --tag-devtools-bg: rgba(59, 109, 208, 0.08);
+  --tag-data: #2a9e7e;
+  --tag-data-bg: rgba(42, 158, 126, 0.08);
+  --tag-webapps: #b55bd0;
+  --tag-webapps-bg: rgba(181, 91, 208, 0.08);
+  --tag-auth: #d05b3b;
+  --tag-auth-bg: rgba(208, 91, 59, 0.08);
+  --tag-infra: #3b9ed0;
+  --tag-infra-bg: rgba(59, 158, 208, 0.08);
+
+  --noise-opacity: 0.015;
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-card-hover: 0 2px 6px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.1);
+  --shadow-glow: 0 0 40px rgba(184, 137, 42, 0.06);
+}
+
+/* ============================================
+   RESET & BASE
+   ============================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.5s var(--ease-out-expo), color 0.5s var(--ease-out-expo);
+}
+
+/* Noise texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: var(--noise-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input { font-family: inherit; }
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+.site-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 48px);
+}
+
+/* ============================================
+   TOP NAV BAR
+   ============================================ */
+.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--bg-primary) 85%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.5s var(--ease-out-expo);
+}
+
+.topnav-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 48px);
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topnav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topnav-logo {
+  width: 32px;
+  height: 32px;
+  background: var(--accent);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--text-inverse);
+  letter-spacing: -0.5px;
+}
+
+.topnav-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.3px;
+}
+
+.topnav-dot {
+  color: var(--accent);
+}
+
+.topnav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all 0.3s var(--ease-out-expo);
+  position: relative;
+}
+
+.theme-toggle:hover {
+  background: var(--accent-subtle);
+  color: var(--accent);
+}
+
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.4s var(--ease-spring);
+}
+
+.theme-toggle:hover svg {
+  transform: rotate(30deg);
+}
+
+.theme-toggle .icon-moon,
+[data-theme="light"] .theme-toggle .icon-sun {
+  display: none;
+}
+
+[data-theme="light"] .theme-toggle .icon-moon {
+  display: block;
+}
+
+.nav-github-link {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all 0.3s var(--ease-out-expo);
+}
+
+.nav-github-link:hover {
+  background: var(--accent-subtle);
+  color: var(--accent);
+}
+
+.nav-github-link svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ============================================
+   HERO
+   ============================================ */
+.hero {
+  padding: 80px 0 48px;
+  position: relative;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  animation: heroGlow 1.5s var(--ease-out-expo) 0.3s forwards;
+}
+
+@keyframes heroGlow {
+  to { opacity: 1; }
+}
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeUp 0.8s var(--ease-out-expo) 0.1s forwards;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.8s var(--ease-out-expo) 0.2s forwards;
+}
+
+.hero-title-accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-description {
+  font-size: clamp(16px, 2vw, 19px);
+  color: var(--text-secondary);
+  max-width: 560px;
+  line-height: 1.7;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.8s var(--ease-out-expo) 0.35s forwards;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 36px;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.8s var(--ease-out-expo) 0.5s forwards;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-stat-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: var(--text-primary);
+}
+
+.hero-stat-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   SEARCH & FILTER BAR
+   ============================================ */
+.controls {
+  padding: 0 0 40px;
+  position: relative;
+  z-index: 10;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.8s var(--ease-out-expo) 0.6s forwards;
+}
+
+.search-wrapper {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--text-tertiary);
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.search-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 52px 0 46px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-lg);
+  font-size: 15px;
+  color: var(--text-primary);
+  outline: none;
+  transition: all 0.3s var(--ease-out-expo);
+}
+
+.search-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+  background: var(--bg-card);
+}
+
+.search-input:focus ~ .search-icon {
+  color: var(--accent);
+}
+
+.search-shortcut {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.search-input:focus ~ .search-shortcut {
+  opacity: 0;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter-tab {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  padding: 8px 16px;
+  border-radius: 100px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  transition: all 0.3s var(--ease-out-expo);
+  white-space: nowrap;
+}
+
+.filter-tab:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.filter-tab.active {
+  background: var(--accent);
+  color: var(--text-inverse);
+  border-color: var(--accent);
+}
+
+.filter-tab .tab-count {
+  display: inline-block;
+  margin-left: 6px;
+  opacity: 0.6;
+}
+
+/* ============================================
+   RESULTS INFO
+   ============================================ */
+.results-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding: 0 4px;
+}
+
+.results-count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.5px;
+}
+
+.results-count strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* ============================================
+   CARD GRID
+   ============================================ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+  padding-bottom: 80px;
+}
+
+/* ============================================
+   APP CARD
+   ============================================ */
+.app-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: all 0.4s var(--ease-out-expo);
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.app-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.app-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-out-expo);
+  pointer-events: none;
+  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--accent-glow), transparent 40%);
+}
+
+.app-card:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-card-hover);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+.app-card:hover::before {
+  opacity: 1;
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.card-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-icon-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid var(--border-subtle);
+}
+
+.card-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.card-tag[data-category="devtools"] {
+  color: var(--tag-devtools);
+  background: var(--tag-devtools-bg);
+}
+.card-tag[data-category="data"] {
+  color: var(--tag-data);
+  background: var(--tag-data-bg);
+}
+.card-tag[data-category="webapps"] {
+  color: var(--tag-webapps);
+  background: var(--tag-webapps-bg);
+}
+.card-tag[data-category="auth"] {
+  color: var(--tag-auth);
+  background: var(--tag-auth-bg);
+}
+.card-tag[data-category="infra"] {
+  color: var(--tag-infra);
+  background: var(--tag-infra-bg);
+}
+
+.card-icon-wrap[data-category="devtools"] { background: var(--tag-devtools-bg); }
+.card-icon-wrap[data-category="data"] { background: var(--tag-data-bg); }
+.card-icon-wrap[data-category="webapps"] { background: var(--tag-webapps-bg); }
+.card-icon-wrap[data-category="auth"] { background: var(--tag-auth-bg); }
+.card-icon-wrap[data-category="infra"] { background: var(--tag-infra-bg); }
+
+.card-body {
+  flex: 1;
+}
+
+.card-name {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+
+.card-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.card-tech {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.card-tech-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.3px;
+}
+
+.card-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--accent);
+  transition: all 0.3s var(--ease-out-expo);
+  white-space: nowrap;
+}
+
+.card-action:hover {
+  background: var(--accent);
+  color: var(--text-inverse);
+  box-shadow: var(--shadow-glow);
+}
+
+.card-action svg {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.3s var(--ease-out-expo);
+}
+
+.card-action:hover svg {
+  transform: translateX(2px);
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+
+.empty-state-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.empty-state-desc {
+  font-size: 14px;
+  color: var(--text-tertiary);
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.site-footer {
+  border-top: 1px solid var(--border-subtle);
+  padding: 32px 0;
+  margin-top: 0;
+}
+
+.footer-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 48px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer-text {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.3px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-link {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.3px;
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: var(--accent);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .hero { padding: 48px 0 32px; }
+  .hero-stats { gap: 28px; }
+  .hero-stat-value { font-size: 22px; }
+  .card-grid { grid-template-columns: 1fr; }
+  .topnav-name { display: none; }
+  .filter-tabs { gap: 4px; }
+  .filter-tab { padding: 6px 12px; font-size: 11px; }
+  .app-card { padding: 20px; }
+  .footer-inner { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 480px) {
+  .hero-title { letter-spacing: -1px; }
+  .hero-stats { flex-wrap: wrap; gap: 20px; }
+  .search-shortcut { display: none; }
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+/* ============================================
+   SELECTION
+   ============================================ */
+::selection {
+  background: var(--accent);
+  color: var(--text-inverse);
+}
+</style>
+</head>
+<body>
+
+<!-- ==========================================
+     TOP NAVIGATION
+     ========================================== -->
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a href="#" class="topnav-brand">
+      <div class="topnav-logo">FL</div>
+      <span class="topnav-name">fredlackey<span class="topnav-dot">.com</span></span>
+    </a>
+    <div class="topnav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+      <a href="https://github.com/FredLackey" class="nav-github-link" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ==========================================
+     HERO SECTION
+     ========================================== -->
+<div class="site-wrapper">
+  <section class="hero">
+    <div class="hero-eyebrow">Open Source Developer Tools</div>
+    <h1 class="hero-title">
+      Built to solve<br>
+      <span class="hero-title-accent">real problems.</span>
+    </h1>
+    <p class="hero-description">
+      A curated collection of developer tools, libraries, and web applications built by Fred Lackey. Each project started as a solution to a problem encountered in production.
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-value" id="statProjects">26</span>
+        <span class="hero-stat-label">Projects</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-value">5</span>
+        <span class="hero-stat-label">Categories</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-value">100+</span>
+        <span class="hero-stat-label">Repos</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SEARCH & FILTERS
+       ========================================== -->
+  <section class="controls">
+    <div class="search-wrapper">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" class="search-input" id="searchInput" placeholder="Search tools and apps..." autocomplete="off" spellcheck="false">
+      <span class="search-shortcut">/</span>
+    </div>
+    <div class="filter-tabs" id="filterTabs">
+      <button class="filter-tab active" data-filter="all">All<span class="tab-count" id="countAll"></span></button>
+      <button class="filter-tab" data-filter="devtools">Developer Tools<span class="tab-count" id="countDevtools"></span></button>
+      <button class="filter-tab" data-filter="data">Data &amp; Parsing<span class="tab-count" id="countData"></span></button>
+      <button class="filter-tab" data-filter="webapps">Web Apps<span class="tab-count" id="countWebapps"></span></button>
+      <button class="filter-tab" data-filter="auth">Auth &amp; Security<span class="tab-count" id="countAuth"></span></button>
+      <button class="filter-tab" data-filter="infra">Infrastructure<span class="tab-count" id="countInfra"></span></button>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       RESULTS & GRID
+       ========================================== -->
+  <div class="results-info">
+    <span class="results-count" id="resultsCount"></span>
+  </div>
+
+  <div class="card-grid" id="cardGrid">
+    <!-- Cards injected by JS -->
+  </div>
+</div>
+
+<!-- ==========================================
+     FOOTER
+     ========================================== -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span class="footer-text">&copy; 2026 Fred Lackey. All rights reserved.</span>
+    <div class="footer-links">
+      <a href="https://github.com/FredLackey" class="footer-link" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/FredLackeyOfficial" class="footer-link" target="_blank" rel="noopener">Official</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ============================================
+// APP DATA
+// ============================================
+const apps = [
+  {
+    name: 'JWT Tools',
+    desc: 'Encode and decode JSON Web Tokens with a clean, browser-based interface. Inspect headers, payloads, and verify signatures on the fly.',
+    icon: '🔑',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['React', 'Vite'],
+    repo: 'FredLackeyOfficial/jwt-tools-ui',
+    action: 'Launch'
+  },
+  {
+    name: 'Bracketter',
+    desc: 'Parse tokenized strings with various bracket formats including {}, [], <>, %%, and more. Supports nested expressions and custom delimiters.',
+    icon: '⟨⟩',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['Node.js', 'TypeScript'],
+    repo: 'FredLackey/bracketter',
+    action: 'View'
+  },
+  {
+    name: 'File Date Organizer',
+    desc: 'Automatically sort files into date-based folder structures. Reads file metadata and creation dates to build clean hierarchies.',
+    icon: '📂',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['Node.js'],
+    repo: 'FredLackeyOfficial/file-date-organizer',
+    action: 'View'
+  },
+  {
+    name: 'SafeMove',
+    desc: 'Recursive file copy and move with built-in backup protection. No-overwrite mode ensures your data is never accidentally lost.',
+    icon: '🛡',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['Node.js', 'CLI'],
+    repo: 'FredLackey/safemove',
+    action: 'View'
+  },
+  {
+    name: 'File Line Replacer',
+    desc: 'Match and replace multiple lines in large text files while preserving whitespace and formatting. Built for bulk config transformations.',
+    icon: '✏️',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['Node.js', 'CLI'],
+    repo: 'FredLackey/file-line-replacer',
+    action: 'View'
+  },
+  {
+    name: 'HCL Parser',
+    desc: 'Parse and compare Terraform HCL files with node extraction. Diff infrastructure configurations and inspect resource hierarchies.',
+    icon: '⚙️',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['Node.js', 'Terraform'],
+    repo: 'FredLackey/hcl-parser',
+    action: 'View'
+  },
+  {
+    name: 'DevUtils CLI',
+    desc: 'Config-driven CLI toolkit for bootstrapping and managing development environments. Define your setup once, replicate everywhere.',
+    icon: '⌨️',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['Node.js', 'CLI'],
+    repo: 'FredLackey/devutils-cli',
+    action: 'View'
+  },
+  {
+    name: 'XLSX Contacts Parser',
+    desc: 'Extract structured contact lists from Excel spreadsheets. Intelligently identifies name and email columns across varying formats.',
+    icon: '📊',
+    category: 'data',
+    categoryLabel: 'Data & Parsing',
+    tech: ['Node.js'],
+    repo: 'FredLackey/xlsx-contacts-parser',
+    action: 'View'
+  },
+  {
+    name: 'XLSX to JSON',
+    desc: 'Convert password-protected Excel files to clean JSON. Handles XLS and XLSX formats with sheet selection and type inference.',
+    icon: '🔄',
+    category: 'data',
+    categoryLabel: 'Data & Parsing',
+    tech: ['Node.js'],
+    repo: 'FredLackey/xlsx-to-json-parser',
+    action: 'View'
+  },
+  {
+    name: 'CSV Contacts Parser',
+    desc: 'Extract and normalize contact data from CSV files. Smart field detection for names, emails, phone numbers, and addresses.',
+    icon: '📋',
+    category: 'data',
+    categoryLabel: 'Data & Parsing',
+    tech: ['Node.js'],
+    repo: 'FredLackey/csv-contacts-parser',
+    action: 'View'
+  },
+  {
+    name: 'Cleaner Node TS',
+    desc: '203+ utility functions for string manipulation, array operations, validation, file systems, date/time, cryptography, and HTTP helpers.',
+    icon: '🧰',
+    category: 'data',
+    categoryLabel: 'Data & Parsing',
+    tech: ['TypeScript', 'Node.js'],
+    repo: 'FredLackey/cleaner-node-ts',
+    action: 'View'
+  },
+  {
+    name: 'To-DTO',
+    desc: 'Convert complex object graphs into safe, publicly consumable DTO objects. Opinionated transforms with configurable field mapping.',
+    icon: '📦',
+    category: 'data',
+    categoryLabel: 'Data & Parsing',
+    tech: ['Node.js'],
+    repo: 'FredLackey/to-dto',
+    action: 'View'
+  },
+  {
+    name: 'DbSchema Parser',
+    desc: 'Parse DbSchema document files and extract table definitions, relationships, and constraints into structured data.',
+    icon: '🗄',
+    category: 'data',
+    categoryLabel: 'Data & Parsing',
+    tech: ['Node.js'],
+    repo: 'dbschema/dbschema',
+    action: 'View'
+  },
+  {
+    name: 'Lottery App',
+    desc: 'Interactive lottery number generator and tracker built with Next.js. Simulate drawings, analyze frequency patterns, and track results.',
+    icon: '🎰',
+    category: 'webapps',
+    categoryLabel: 'Web Apps',
+    tech: ['Next.js', 'React'],
+    repo: 'FredLackey/lottery-nextjs',
+    action: 'Launch'
+  },
+  {
+    name: 'Open Resume',
+    desc: 'Build and parse resumes with real-time PDF preview. ATS-friendly formatting with a modern, professional design system.',
+    icon: '📄',
+    category: 'webapps',
+    categoryLabel: 'Web Apps',
+    tech: ['React', 'PDF'],
+    repo: 'FredLackey/open-resume',
+    action: 'Launch'
+  },
+  {
+    name: 'CRMS UI',
+    desc: 'Cyber Range Management System for managing training resources, courses, students, hosts, and resource allocations.',
+    icon: '🎯',
+    category: 'webapps',
+    categoryLabel: 'Web Apps',
+    tech: ['React', 'Material-UI'],
+    repo: 'FredLackey/crms-ui',
+    action: 'Launch'
+  },
+  {
+    name: 'Messenger Clone',
+    desc: 'Full-featured real-time messaging app with typing indicators, read receipts, and conversation threads.',
+    icon: '💬',
+    category: 'webapps',
+    categoryLabel: 'Web Apps',
+    tech: ['Next.js', 'Pusher', 'Prisma'],
+    repo: 'FredLackey/messenger-clone',
+    action: 'Launch'
+  },
+  {
+    name: 'GitHub Cleanup',
+    desc: 'Manage and clean up GitHub repositories at scale. Audit, archive, and organize repos across your organizations.',
+    icon: '🧹',
+    category: 'webapps',
+    categoryLabel: 'Web Apps',
+    tech: ['React', 'GitHub API'],
+    repo: 'FredLackeyOfficial/bolt-github-cleanup',
+    action: 'Launch'
+  },
+  {
+    name: 'React JWT Callback',
+    desc: 'Reference implementation for handling JWT callbacks from authorization servers. Clean token extraction and storage patterns.',
+    icon: '🔐',
+    category: 'auth',
+    categoryLabel: 'Auth & Security',
+    tech: ['React', 'JWT'],
+    repo: 'FredLackey/react-jwt-callback',
+    action: 'View'
+  },
+  {
+    name: 'Protected Routes',
+    desc: 'Authentication flow patterns with React Router. Guard routes, redirect unauthenticated users, and preserve intended destinations.',
+    icon: '🚧',
+    category: 'auth',
+    categoryLabel: 'Auth & Security',
+    tech: ['React', 'React Router'],
+    repo: 'FredLackey/react-protected-routes',
+    action: 'View'
+  },
+  {
+    name: 'Passport Entrance',
+    desc: 'OAuth social login with Express and Passport.js. Facebook, Google, and account linking with graceful fallbacks.',
+    icon: '🪪',
+    category: 'auth',
+    categoryLabel: 'Auth & Security',
+    tech: ['Express', 'Passport.js'],
+    repo: 'FredLackey/express-passport-entrance',
+    action: 'View'
+  },
+  {
+    name: 'Passwordless Auth',
+    desc: 'Passwordless authentication flow using magic links and one-time codes. No passwords to store, leak, or forget.',
+    icon: '✨',
+    category: 'auth',
+    categoryLabel: 'Auth & Security',
+    tech: ['Next.js', 'Auth'],
+    repo: 'FredLackey/passwordless',
+    action: 'View'
+  },
+  {
+    name: 'CICD.sh',
+    desc: 'Lightweight deployment automation that monitors git repos for changes and deploys using a three-repo pattern: source, data, deploy.',
+    icon: '🚀',
+    category: 'infra',
+    categoryLabel: 'Infrastructure',
+    tech: ['Bash', 'Git'],
+    repo: 'FredLackey/cicd.sh',
+    action: 'View'
+  },
+  {
+    name: 'AWS SPA Boilerplate',
+    desc: 'Production-ready monorepo for provisioning AWS infrastructure for single-page apps. CloudFront, Lambda@Edge, Route53, and S3.',
+    icon: '☁️',
+    category: 'infra',
+    categoryLabel: 'Infrastructure',
+    tech: ['AWS', 'Terraform', 'Node.js'],
+    repo: 'FredLackey/aws-spa-boilerplate',
+    action: 'View'
+  },
+  {
+    name: 'Media Tools',
+    desc: 'Work with multimedia files at scale. Tag editing, format conversion, and batch operations for MP3, MP4, and M4A files.',
+    icon: '🎵',
+    category: 'infra',
+    categoryLabel: 'Infrastructure',
+    tech: ['Node.js', 'CLI'],
+    repo: 'FredLackey/media-tools',
+    action: 'View'
+  },
+  {
+    name: 'RestUtils',
+    desc: 'Convert Node.js modules into REST APIs with minimal boilerplate. Automatic route generation from exported functions.',
+    icon: '🔌',
+    category: 'devtools',
+    categoryLabel: 'Developer Tools',
+    tech: ['Node.js', 'Express'],
+    repo: 'restutils/restutils',
+    action: 'View'
+  }
+];
+
+// ============================================
+// DOM REFS
+// ============================================
+const searchInput = document.getElementById('searchInput');
+const filterTabs = document.getElementById('filterTabs');
+const cardGrid = document.getElementById('cardGrid');
+const resultsCount = document.getElementById('resultsCount');
+
+// ============================================
+// STATE
+// ============================================
+let activeFilter = 'all';
+let searchQuery = '';
+
+// ============================================
+// CATEGORY COUNTS
+// ============================================
+function updateCounts() {
+  const counts = { all: apps.length };
+  apps.forEach(app => {
+    counts[app.category] = (counts[app.category] || 0) + 1;
+  });
+  document.getElementById('countAll').textContent = counts.all;
+  document.getElementById('countDevtools').textContent = counts.devtools || 0;
+  document.getElementById('countData').textContent = counts.data || 0;
+  document.getElementById('countWebapps').textContent = counts.webapps || 0;
+  document.getElementById('countAuth').textContent = counts.auth || 0;
+  document.getElementById('countInfra').textContent = counts.infra || 0;
+}
+
+// ============================================
+// RENDER CARDS
+// ============================================
+function getFilteredApps() {
+  return apps.filter(app => {
+    const matchesFilter = activeFilter === 'all' || app.category === activeFilter;
+    const matchesSearch = searchQuery === '' ||
+      app.name.toLowerCase().includes(searchQuery) ||
+      app.desc.toLowerCase().includes(searchQuery) ||
+      app.tech.some(t => t.toLowerCase().includes(searchQuery)) ||
+      app.categoryLabel.toLowerCase().includes(searchQuery);
+    return matchesFilter && matchesSearch;
+  });
+}
+
+function renderCards() {
+  const filtered = getFilteredApps();
+
+  resultsCount.innerHTML = `Showing <strong>${filtered.length}</strong> of ${apps.length} projects`;
+
+  if (filtered.length === 0) {
+    cardGrid.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <div class="empty-state-title">No projects found</div>
+        <div class="empty-state-desc">Try adjusting your search or filter criteria</div>
+      </div>`;
+    return;
+  }
+
+  cardGrid.innerHTML = filtered.map((app, i) => `
+    <article class="app-card" style="transition-delay: ${i * 40}ms" data-category="${app.category}">
+      <div class="card-header">
+        <div class="card-icon-wrap" data-category="${app.category}">${app.icon}</div>
+        <span class="card-tag" data-category="${app.category}">${app.categoryLabel}</span>
+      </div>
+      <div class="card-body">
+        <h3 class="card-name">${app.name}</h3>
+        <p class="card-desc">${app.desc}</p>
+      </div>
+      <div class="card-footer">
+        <div class="card-tech">
+          ${app.tech.map(t => `<span class="card-tech-tag">${t}</span>`).join('')}
+        </div>
+        <a href="https://github.com/${app.repo}" class="card-action" target="_blank" rel="noopener">
+          ${app.action}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      </div>
+    </article>
+  `).join('');
+
+  // Stagger card entrance
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.app-card').forEach((card, i) => {
+      setTimeout(() => card.classList.add('visible'), i * 40);
+    });
+  });
+}
+
+// ============================================
+// MOUSE GLOW EFFECT ON CARDS
+// ============================================
+cardGrid.addEventListener('mousemove', (e) => {
+  document.querySelectorAll('.app-card').forEach(card => {
+    const rect = card.getBoundingClientRect();
+    card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+    card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+  });
+});
+
+// ============================================
+// SEARCH
+// ============================================
+searchInput.addEventListener('input', (e) => {
+  searchQuery = e.target.value.toLowerCase().trim();
+  renderCards();
+});
+
+// Keyboard shortcut: / to focus search
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement !== searchInput) {
+    e.preventDefault();
+    searchInput.focus();
+  }
+  if (e.key === 'Escape' && document.activeElement === searchInput) {
+    searchInput.blur();
+    searchInput.value = '';
+    searchQuery = '';
+    renderCards();
+  }
+});
+
+// ============================================
+// FILTER TABS
+// ============================================
+filterTabs.addEventListener('click', (e) => {
+  const tab = e.target.closest('.filter-tab');
+  if (!tab) return;
+  filterTabs.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  activeFilter = tab.dataset.filter;
+  renderCards();
+});
+
+// ============================================
+// THEME TOGGLE
+// ============================================
+const themeToggle = document.getElementById('themeToggle');
+const html = document.documentElement;
+
+function setTheme(theme) {
+  html.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+}
+
+themeToggle.addEventListener('click', () => {
+  const current = html.getAttribute('data-theme');
+  setTheme(current === 'dark' ? 'light' : 'dark');
+});
+
+// Restore saved theme
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) setTheme(savedTheme);
+
+// ============================================
+// INIT
+// ============================================
+updateCounts();
+renderCards();
+</script>
+
+</body>
+</html>
